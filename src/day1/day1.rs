@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
@@ -54,6 +55,24 @@ fn part_1(column1: &mut Vec<i64>, column2: &mut Vec<i64>) -> Result<i64, String>
     Ok(distance)
 }
 
+fn part_2(column1: &mut Vec<i64>, column2: &mut Vec<i64>) -> Result<i64, String> {
+    let mut counts = HashMap::new();
+
+    for &value in column2.iter() {
+        *counts.entry(value).or_insert(0) += 1;
+    }
+
+    let mut similarity: i64 = 0;
+
+    for &value in column1.iter() {
+        if let Some(&count) = counts.get(&value) {
+            similarity += count * value;
+        }
+    }
+
+    Ok(similarity)
+}
+
 fn main() {
     println!("Day 1!");
     
@@ -66,7 +85,18 @@ fn main() {
                     println!("Part 1 distance is: {}", distance);
                 },
                 Err(e) => {
-                    panic!("Part 1 example failed with : {}", e);
+                    panic!("Part 1 input failed with : {}", e);
+                }
+            }
+
+            let value2 = part_2(&mut columns.0, &mut columns.1);
+
+            match value2 {
+                Ok(similarity) => {
+                    println!("Part 2 similarity is: {}", similarity);
+                },
+                Err(e) => {
+                    panic!("Part 2 input failed with : {}", e);
                 }
             }
         },
@@ -96,6 +126,31 @@ mod tests {
                 match value {
                     Ok(distance) => {
                          assert_eq!(distance, 11, "The distance doesn't match");
+                    },
+                    Err(e) => {
+                        panic!("Part 1 example failed with : {}", e);
+                    }
+                }
+            },
+            Err(e) => {
+                match e {
+                    FileError::ParsingError => {
+                        assert!(true, "Parsing error");
+                    }
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn test_example_part2() {
+        match read_file("example.txt".to_string()) {
+            Ok(mut columns) => {
+                let value: Result<_, _> = part_2(&mut columns.0, &mut columns.1);
+
+                match value {
+                    Ok(similarity) => {
+                         assert_eq!(similarity, 31, "The similarity doesn't match");
                     },
                     Err(e) => {
                         panic!("Part 1 example failed with : {}", e);

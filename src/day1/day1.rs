@@ -15,18 +15,19 @@ where
     Ok(io::BufReader::new(file).lines())
 }
 
-fn read_file(path : String) -> Result<(Vec::<i64>, Vec<i64>), FileError> {
+fn read_file(path: String) -> Result<(Vec<i64>, Vec<i64>), FileError> {
     let mut column1: Vec<i64> = Vec::new();
     let mut column2: Vec<i64> = Vec::new();
 
-    //if let Ok(lines) = read_lines(path) {
     match read_lines(path) {
         Ok(lines) => {
             for line in lines {
                 if let Ok(row) = line {
                     let numbers: Vec<&str> = row.split_whitespace().collect();
                     if numbers.len() == 2 {
-                        if let (Ok(num1), Ok(num2)) = (numbers[0].parse::<i64>(), numbers[1].parse::<i64>()) {
+                        if let (Ok(num1), Ok(num2)) =
+                            (numbers[0].parse::<i64>(), numbers[1].parse::<i64>())
+                        {
                             column1.push(num1);
                             column2.push(num2);
                         } else {
@@ -36,8 +37,8 @@ fn read_file(path : String) -> Result<(Vec::<i64>, Vec<i64>), FileError> {
                 }
             }
             Ok((column1, column2))
-        },
-        Err(_) => Err(FileError::ParsingError)
+        }
+        Err(_) => Err(FileError::ParsingError),
     }
 }
 
@@ -75,7 +76,7 @@ fn part_2(column1: &mut Vec<i64>, column2: &mut Vec<i64>) -> Result<i64, String>
 
 fn main() {
     println!("Day 1!");
-    
+
     match read_file("input.txt".to_string()) {
         Ok(mut columns) => {
             let value = part_1(&mut columns.0, &mut columns.1);
@@ -83,7 +84,7 @@ fn main() {
             match value {
                 Ok(distance) => {
                     println!("Part 1 distance is: {}", distance);
-                },
+                }
                 Err(e) => {
                     panic!("Part 1 input failed with : {}", e);
                 }
@@ -94,22 +95,18 @@ fn main() {
             match value2 {
                 Ok(similarity) => {
                     println!("Part 2 similarity is: {}", similarity);
-                },
+                }
                 Err(e) => {
                     panic!("Part 2 input failed with : {}", e);
                 }
             }
-        },
-        Err(e) => {
-            match e {
-                FileError::ParsingError => {
-                    assert!(true, "Parsing error");
-                }
-            }
         }
+        Err(e) => match e {
+            FileError::ParsingError => {
+                assert!(true, "Parsing error");
+            }
+        },
     }
-
-    
 }
 
 #[cfg(test)]
@@ -125,20 +122,18 @@ mod tests {
 
                 match value {
                     Ok(distance) => {
-                         assert_eq!(distance, 11, "The distance doesn't match");
-                    },
+                        assert_eq!(distance, 11, "The distance doesn't match");
+                    }
                     Err(e) => {
                         panic!("Part 1 example failed with : {}", e);
                     }
                 }
-            },
-            Err(e) => {
-                match e {
-                    FileError::ParsingError => {
-                        assert!(true, "Parsing error");
-                    }
-                }
             }
+            Err(e) => match e {
+                FileError::ParsingError => {
+                    assert!(true, "Parsing error");
+                }
+            },
         }
     }
 
@@ -150,20 +145,18 @@ mod tests {
 
                 match value {
                     Ok(similarity) => {
-                         assert_eq!(similarity, 31, "The similarity doesn't match");
-                    },
+                        assert_eq!(similarity, 31, "The similarity doesn't match");
+                    }
                     Err(e) => {
                         panic!("Part 1 example failed with : {}", e);
                     }
                 }
-            },
-            Err(e) => {
-                match e {
-                    FileError::ParsingError => {
-                        assert!(true, "Parsing error");
-                    }
-                }
             }
+            Err(e) => match e {
+                FileError::ParsingError => {
+                    assert!(true, "Parsing error");
+                }
+            },
         }
     }
 }
